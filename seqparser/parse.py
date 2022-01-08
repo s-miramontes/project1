@@ -146,12 +146,11 @@ class FastaParser(Parser):
 
         yield seq_name, sequence    
 
-
 class FastqParser(Parser):
     """
-    Fastq Specific Parsing"""
+    Fastq Specific Parsing
+    """
 
-    
     def _get_record(self, f_obj: io.TextIOWrapper) -> Tuple[str, str, str]:
         """
         returns the next fastq record
