@@ -96,8 +96,13 @@ class Parser:
             # and implement an exception for the error you will find in
             # the error message you receive. 
             while True:
-                rec = self.get_record(f_obj)
-                yield rec
+                try: 
+                    rec = self.get_record(f_obj)
+                except:
+                    break
+                for s in rec: # for sequence in record
+                        yield s # yield sequence
+
 
     def _get_record(self, f_obj: io.TextIOWrapper) -> Union[Tuple[str, str], Tuple[str, str, str]]:
         """
@@ -118,13 +123,65 @@ class FastaParser(Parser):
         returns the next fasta record
         """
 
+        # First we obtain the header at the top
+        for line in f_obj:
+            if line[0] == ">": # catching carrot
+                seq_name = line[1:].rstrip()
+                break
+            else:
+                break # don't need this, since not getting header
+
+        # at this point we've stored the Header as seq_name
+        next(f_obj) # skipping the line since we've obtained the first seq_name/header
+
+        # no longer starts at original seq_name
+        for line in f_obj:
+            if line[0] == '>': 
+                yield seq_name, sequence
+                sequence = ''
+                seq_name = line[1:].rstrip() # anything after the carrot symbol
+                continue
+            else:
+                sequence = line
+
+        yield seq_name, sequence    
+
 
 class FastqParser(Parser):
     """
-    Fastq Specific Parsing
-    """
+    Fastq Specific Parsing"""
+
+    
     def _get_record(self, f_obj: io.TextIOWrapper) -> Tuple[str, str, str]:
         """
         returns the next fastq record
         """
+
+        # get the header
+        for line in f_obj:
+            if line[0] == '@': # '@' instead of '>'
+                seq_name = line[1:].rstrip() # after '@'
+            else:
+                break
+
+        next(f_obj) #ignore the first header since we have stored already
+
+        for line in f_obj:
+            first_line = line
+            if line[0] == '@':
+                yield, seq_name, sequence, quality
+                sequence = ''
+                quality = ''
+                seq_name = line[1:].rstrip() # everything after '@'
+                continue
+            elif line[0]== '+': # using this character to determine former and next lines
+                sequence = first_line
+                quality = next(f_obj) # the line that preceeds
+                continue
+            else:
+                continue
+
+        yield seq_name, sequence, quality
+
+
 

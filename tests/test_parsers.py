@@ -28,7 +28,10 @@ def test_FastaParser():
     your FastaParser class and assert that it properly
     reads in the example Fasta File.
     """
-    pass
+    fasta_obj = FastaParser("../data/test.fa")
+    recs = [rec for rec in fasta_obj]
+    print(recs)
+    pass 
 
 
 def test_FastqParser():
