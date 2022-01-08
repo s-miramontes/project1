@@ -98,10 +98,10 @@ class Parser:
             while True:
                 try: 
                     rec = self.get_record(f_obj)
-                except:
+                except UnboundLocalError:
                     break
-                for s in rec: # for sequence in record
-                        yield s # yield sequence
+                for s in rec:
+                    yield s
 
 
     def _get_record(self, f_obj: io.TextIOWrapper) -> Union[Tuple[str, str], Tuple[str, str, str]]:
@@ -132,10 +132,12 @@ class FastaParser(Parser):
                 break # don't need this, since not getting header
 
         # at this point we've stored the Header as seq_name
-        next(f_obj) # skipping the line since we've obtained the first seq_name/header
-
+        #print(next(f_obj)) # skipping the line since we've obtained the first seq_name/header
+        
         # no longer starts at original seq_name
         for line in f_obj:
+            #sequence = line
+            #yield seq_name, sequence
             if line[0] == '>': 
                 yield seq_name, sequence
                 sequence = ''
@@ -145,6 +147,8 @@ class FastaParser(Parser):
                 sequence = line
 
         yield seq_name, sequence    
+
+        
 
 class FastqParser(Parser):
     """
@@ -163,12 +167,12 @@ class FastqParser(Parser):
             else:
                 break
 
-        next(f_obj) #ignore the first header since we have stored already
+        print(next(f_obj)) #ignore the first header since we have stored already
 
         for line in f_obj:
             first_line = line
             if line[0] == '@':
-                yield, seq_name, sequence, quality
+                yield seq_name, sequence, quality
                 sequence = ''
                 quality = ''
                 seq_name = line[1:].rstrip() # everything after '@'
@@ -183,4 +187,10 @@ class FastqParser(Parser):
         yield seq_name, sequence, quality
 
 
+def main():
+    samp = FastaParser("../data/test.fa")
+    for x in samp:
+        print(x)
+
+main()
 
