@@ -54,4 +54,4 @@ def test_FastqParser():
     
     assert head == 'seq99'
     assert s == 'CCGAGTTTTGTAGTGGGCTCAACTGAAATCCTATTCTTAGACGATTGGTCATAAAACCCTTTCACTGTACGGACGTAGACCCTGCTCCGTCTTCCAGCAG'
-    assert qual  == 100
+    assert qual  == 101
