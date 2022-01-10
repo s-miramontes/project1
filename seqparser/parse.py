@@ -219,19 +219,3 @@ class FastqParser(Parser):
         return seq_name, sequence, quality
 
 
-
-def main():
-    print('Fasta Test')
-    samp = FastaParser("../data/test.fa")
-    for s in samp:
-        print(s)
-        break
-
-    print('Fastq Test')
-    samp2 = FastqParser("../data/test.fq")
-    for i in samp2:
-        print(i)
-        break
-
-main()
-
