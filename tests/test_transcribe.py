@@ -34,4 +34,5 @@ def test_reverse_transcribe():
     Write your unit test for the
     reverse transcribe function here.
     """
+    # now assert flipped
     assert reverse_transcribe('ACCTGT') == 'ACAGGU'
