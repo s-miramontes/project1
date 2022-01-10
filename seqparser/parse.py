@@ -95,13 +95,26 @@ class Parser:
             # You will need to look at the `Try` / `Except` keywords in python
             # and implement an exception for the error you will find in
             # the error message you receive. 
+
             while True:
+                # try getting a record
                 try: 
                     rec = self.get_record(f_obj)
-                except UnboundLocalError:
+                
+                # if exception, break, since re-implementing __iter__ 
+                # method, one must raise a fitting exception within
+                # the _get_record methods.
+                # arrive at an iteration error, since this is the new 
+                # developed 
+                # Python exceptions:
+                # https://docs.python.org/3/library/exceptions.html
+
+                except EOFError: # we'd want to raise when we reach EOF
+                    print("You've reached the end of the file!")
                     break
-                for s in rec:
-                    yield s
+
+                # nothing broke, give me rec    
+                yield rec
 
 
     def _get_record(self, f_obj: io.TextIOWrapper) -> Union[Tuple[str, str], Tuple[str, str, str]]:
@@ -123,30 +136,50 @@ class FastaParser(Parser):
         returns the next fasta record
         """
 
-        # First we obtain the header at the top
-        for line in f_obj:
-            if line[0] == ">": # catching carrot
-                seq_name = line[1:].rstrip()
-                break
-            else:
-                break # don't need this, since not getting header
+        ###################### Added Notes from Silvia #####################
+        #
+        #     Taking advantage of the fact that 
+        #     f_obj is an io.TextIOWrapper, which reveals
+        #     that the user can take advantage of f_obj
+        #     being a stream, since the call with open
+        #     turns our files into text streams.
+        #     Upon reading on the available methods for text
+        #     streams, I came across the construction of the
+        #     I/O wrapper, and the class hierarchy ABC 
+        #     (Abstract Base Class). This includes some basic
+        #     methods like `readline`, which reads and returns
+        #     one line of the stream.
+        #     source:
+        #     https://docs.python.org/3/library/io.html#io.IOBase.readline
+        #     
+        #     
+        #     Thus there is no need to iterate line by line
+        #     from scratch, and we could use the built in
+        #     readline method, which reads line by line.
+        #     And thus, we can store each of the lines accordingly,
+        #     to whatever we wish to output.
+        #
+        #
+        #     Note that similar logic is applied to the FastqParser
+        #     method.
+        ####################################################################
 
-        # at this point we've stored the Header as seq_name
-        #print(next(f_obj)) # skipping the line since we've obtained the first seq_name/header
-        
-        # no longer starts at original seq_name
-        for line in f_obj:
-            #sequence = line
-            #yield seq_name, sequence
-            if line[0] == '>': 
-                yield seq_name, sequence
-                sequence = ''
-                seq_name = line[1:].rstrip() # anything after the carrot symbol
-                continue
-            else:
-                sequence = line
 
-        yield seq_name, sequence    
+        # get desired header/sequence name first
+        # rstrip removes trailing '\n' 
+        # slicing [1:] at headers to remove '>'
+
+        seq_name = f_obj.readline().rstrip()[1:] 
+
+        # have we reached EOF?
+        if seq_name == '':
+            raise EOFError 
+
+        # get the actual sequence
+        sequence = f_obj.readline().rstrip() 
+
+        # return statement is a tuple
+        return seq_name, sequence
 
         
 
@@ -160,37 +193,45 @@ class FastqParser(Parser):
         returns the next fastq record
         """
 
-        # get the header
-        for line in f_obj:
-            if line[0] == '@': # '@' instead of '>'
-                seq_name = line[1:].rstrip() # after '@'
-            else:
-                break
+        # AUTHOR NOTES:
+        # In contrast with Fasta class, we now deal with 4 text lines.
+        # a header/sequence name, the sequence, a '+' symbol, and
+        # the quality of the sequence.
+        # We are interested in only outputting everything except '+'.
+        # Everything is stored in variables to keep
+        # track of each line being read at each call to get_record.
 
-        print(next(f_obj)) #ignore the first header since we have stored already
+        # sequence name per usual    
+        seq_name = f_obj.readline().rstrip()[1:]
 
-        for line in f_obj:
-            first_line = line
-            if line[0] == '@':
-                yield seq_name, sequence, quality
-                sequence = ''
-                quality = ''
-                seq_name = line[1:].rstrip() # everything after '@'
-                continue
-            elif line[0]== '+': # using this character to determine former and next lines
-                sequence = first_line
-                quality = next(f_obj) # the line that preceeds
-                continue
-            else:
-                continue
+        # in case we've reached EOF    
+        if seq_name == '':
+            raise EOFError
 
-        yield seq_name, sequence, quality
+        # sequence per usual
+        sequence = f_obj.readline().rstrip()
+
+        # now the two new lines
+        psign  = f_obj.readline()
+        quality = f_obj.readline().rstrip()
+
+        # returning a 3-element tuple
+        return seq_name, sequence, quality
+
 
 
 def main():
+    print('Fasta Test')
     samp = FastaParser("../data/test.fa")
-    for x in samp:
-        print(x)
+    for s in samp:
+        print(s)
+        break
+
+    print('Fastq Test')
+    samp2 = FastqParser("../data/test.fq")
+    for i in samp2:
+        print(i)
+        break
 
 main()
 
