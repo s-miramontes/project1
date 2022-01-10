@@ -8,8 +8,8 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "seqparser"
 authors = [{
-	name = Silvia Miramontes,
-	email = silvia.miramontes@ucsf.edu
+	name = "Silvia Miramontes",
+	email = "silvia.miramontes@ucsf.edu"
 	}]
 readme = "README.md"
 dynamic = ["version", "description"]
