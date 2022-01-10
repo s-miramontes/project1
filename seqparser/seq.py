@@ -3,8 +3,8 @@
 
 def transcribe(seq: str) -> str:
     """
-    transcribes DNA to RNA by replacing
-    all `T` to `U`
+    transcribes DNA to RNA by generating
+    the complement sequence with T -> U replacement
     """
 
     # rna dict
@@ -26,8 +26,8 @@ def transcribe(seq: str) -> str:
 
 def reverse_transcribe(seq: str) -> str:
     """
-    transcribes DNA to RNA by replacing
-    all `T` to `U` then reverses the sequence
+    transcribes DNA to RNA then reverses
+    the strand
     """
     # Change T to U first
     transc = transcribe(seq)
