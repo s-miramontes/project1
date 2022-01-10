@@ -1,12 +1,18 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
+requires = [
+	"flit_core >=3.2,<4",
+	"python_version >= '3.7'"
+	]
 build-backend = "flit_core.buildapi"
 
 [project]
 name = "seqparser"
-authors = [{name = "Silvia Miramontes", email = "silvia.miramontes@ucsf.edu"}]
+authors = [{
+	name = Silvia Miramontes,
+	email = silvia.miramontes@ucsf.edu
+	}]
 readme = "README.md"
 dynamic = ["version", "description"]
-
-[project.urls]
-Home = "http://www.github.com/s-miramontes/proj1"
+dependencies = [
+	"pytest"
+]
