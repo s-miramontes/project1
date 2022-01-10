@@ -47,7 +47,7 @@ def test_FastqParser():
     """
 
     fastq_obj = FastqParser("data/test.fq")
-    for seq in fastaq_obj:
+    for seq in fastq_obj:
         head = seq[0]
         s = seq[1]
         qual = len(s[2])
