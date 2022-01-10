@@ -6,7 +6,10 @@ build-backend = "flit_core.buildapi"
 name = "seqparser"
 authors = [{name = "Silvia Miramontes", email = "silvia.miramontes@ucsf.edu"}]
 readme = "README.md"
+license = {file = "LICENSE"}
+classifier = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
+dependencies = [pytest]
 
 [project.urls]
 Home = "http://www.github.com/s-miramontes/proj1"
