@@ -28,7 +28,7 @@ def test_FastaParser():
     your FastaParser class and assert that it properly
     reads in the example Fasta File.
     """
-    fasta_obj = FastaParser("../data/test.fa")
+    fasta_obj = FastaParser("data/test.fa")
     for seq in fasta_obj:
         header = seq[0]
         s = seq[1]
@@ -46,7 +46,7 @@ def test_FastqParser():
     reads in the example Fastq File.
     """
 
-    fastq_obj = FastqParser("../data/test.fq")
+    fastq_obj = FastqParser("data/test.fq")
     for seq in fastaq_obj:
         head = seq[0]
         s = seq[1]
